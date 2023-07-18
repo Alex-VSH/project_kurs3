@@ -1,16 +1,10 @@
-import json
-import os
-from datetime import datetime
-from utils import *
+from utils import list_of_dates, list_of_operations, print_operations, open_json_file
 
 
 # Код программы
-operation_path = os.path.join(os.path.dirname(__file__), "operations.json")
 
-
-with open(operation_path, 'r', encoding='utf-8') as file:
-    text = json.load(file)
-    last_five_list = list_of_dates(text)
-    list_ops_reverse = list_of_operations(text, last_five_list)
-    for i in range(len(list_ops_reverse)):
-        print(print_operations(list_ops_reverse[i]))
+ops_catalog = open_json_file('src', "operations.json")
+last_five_list = list_of_dates(ops_catalog)
+list_ops_reverse = list_of_operations(ops_catalog, last_five_list)
+for i in range(len(list_ops_reverse)):
+    print(print_operations(list_ops_reverse[i]))

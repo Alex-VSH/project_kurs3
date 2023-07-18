@@ -1,40 +1,41 @@
+import json
+import os
 from datetime import datetime
 
 
-def list_of_dates(text):
+def list_of_dates(all_operations):
     """Функция возвращает список из пяти дат от последних
     успешных операций
     из json файла"""
-    list = []
-    for i in range(len(text)):
-        if text[i] == {}:
-            continue
-        if text[i]['state'] == "CANCELED":
-            continue
-        list.append(text[i]['date'])
-    sorted_list = sorted(list)
-    last_five_list = sorted_list[-5:]
-    return last_five_list
+    catalog = []
+    for i in range(len(all_operations)):
+        if all_operations[i] != {} and all_operations[i]['state'] != "CANCELED":
+            catalog.append(all_operations[i]['date'])
+    sorted_catalog = sorted(catalog)
+    last_five_catalog = sorted_catalog[-5:]
+    return last_five_catalog
 
-def get_name(dictionary):
+
+def get_date(dictionary):
     """Функция возвращает имя ключа для дальнейшей сортировки по нему"""
     return dictionary['date']
 
-def list_of_operations(text, list):
+
+def list_of_operations(all_operations, catalog):
     """Функция возвращает список из словарей с информацией по последним
 пяти успешным операциям"""
-    list_ops = []
-    for i in range(len(text)):
-        for a in range(len(list)):
-            if text[i] == {}:
+    catalog_ops = []
+    for i in range(len(all_operations)):
+        for a in range(len(catalog)):
+            if all_operations[i] == {}:
                 continue
-            if text[i]['state'] == "CANCELED":
+            if all_operations[i]['state'] == "CANCELED":
                 continue
-            if text[i]['date'] == list[a]:
-                list_ops.append(text[i])
-    list_ops_sorted = sorted(list_ops, key=get_name)
-    list_ops_reverse = list_ops_sorted[::-1]
-    return list_ops_reverse
+            if all_operations[i]['date'] == catalog[a]:
+                catalog_ops.append(all_operations[i])
+    catalog_ops_sorted = sorted(catalog_ops, key=get_date)
+    catalog_ops_reverse = catalog_ops_sorted[::-1]
+    return catalog_ops_reverse
 
 
 def convert_number(number):
@@ -43,6 +44,7 @@ def convert_number(number):
         return number[:5] + ' **' + number[-4:]
     else:
         return number[:-16] + number[-16:-12] + ' ' + number[-12:-10] + '** **** ' + number[-4:]
+
 
 def print_operations(elem_of_list_ops):
     """Функция выводит 5 последних успешных операций из файла json"""
@@ -60,3 +62,10 @@ def print_operations(elem_of_list_ops):
 {from_whom}{to_whom}
 {amount} {currency}
 """
+
+
+def open_json_file(file_dir, file_name):
+    operation_path = os.path.join(os.path.dirname(file_dir), file_name)
+    with open(operation_path, 'r', encoding='utf-8') as file:
+        ops_catalog = json.load(file)
+    return ops_catalog
