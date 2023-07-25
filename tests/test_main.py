@@ -2,7 +2,7 @@ import json
 import os
 import pytest
 
-from src.utils import list_of_dates, list_of_operations, print_operations, get_date, convert_number, open_json_file
+from src.utils import print_operations, _get_date, convert_number, open_json_file, get_list_of_5_succ_ops
 
 
 @pytest.fixture()
@@ -13,63 +13,50 @@ def load_json():
     return ops_catalog
 
 
-def test_list_of_dates(load_json):
-    assert list_of_dates(load_json) == ['2019-04-04T23:20:05.206878',
-                                        '2019-07-03T18:35:29.512364',
-                                        '2019-07-12T20:41:47.882230',
-                                        '2019-08-26T10:50:58.294041',
-                                        '2019-12-08T22:46:21.935582']
+def test__get_date(load_json):
+    assert _get_date(load_json[0]) == '2019-08-26T10:50:58.294041'
 
 
-def test_get_date(load_json):
-    assert get_date(load_json[0]) == '2019-08-26T10:50:58.294041'
-
-
-def test_list_of_operations(load_json):
-    assert list_of_operations(load_json, list_of_dates(load_json)) == [{'date': '2019-12-08T22:46:21.935582',
-                                                                        'description': 'Открытие вклада',
-                                                                        'id': 863064926,
-                                                                        'operationAmount': {'amount': '41096.24',
-                                                                                            'currency': {'code': 'USD',
-                                                                                                         'name': 'USD'}},
-                                                                        'state': 'EXECUTED',
-                                                                        'to': 'Счет 90424923579946435907'},
-                                                                       {'date': '2019-08-26T10:50:58.294041',
-                                                                        'description': 'Перевод организации',
-                                                                        'from': 'Maestro 1596837868705199',
-                                                                        'id': 441945886,
-                                                                        'operationAmount': {'amount': '31957.58',
-                                                                                            'currency': {'code': 'RUB',
-                                                                                                         'name': 'руб.'}},
-                                                                        'state': 'EXECUTED',
-                                                                        'to': 'Счет 64686473678894779589'},
-                                                                       {'date': '2019-07-12T20:41:47.882230',
-                                                                        'description': 'Перевод организации',
-                                                                        'from': 'Счет 48894435694657014368',
-                                                                        'id': 522357576,
-                                                                        'operationAmount': {'amount': '51463.70',
-                                                                                            'currency': {'code': 'USD',
-                                                                                                         'name': 'USD'}},
-                                                                        'state': 'EXECUTED',
-                                                                        'to': 'Счет 38976430693692818358'},
-                                                                       {'date': '2019-07-03T18:35:29.512364',
-                                                                        'description': 'Перевод организации',
-                                                                        'from': 'MasterCard 7158300734726758',
-                                                                        'id': 41428829,
-                                                                        'operationAmount': {'amount': '8221.37',
-                                                                                            'currency': {'code': 'USD',
-                                                                                                         'name': 'USD'}},
-                                                                        'state': 'EXECUTED',
-                                                                        'to': 'Счет 35383033474447895560'},
-                                                                       {'date': '2019-04-04T23:20:05.206878',
-                                                                        'description': 'Перевод со счета на счет',
-                                                                        'from': 'Счет 19708645243227258542',
-                                                                        'id': 142264268,
-                                                                        'operationAmount': {'amount': '79114.93',
-                                                                                            'currency': {'code': 'USD',
-                                                                                                         'name': 'USD'}},
-                                                                        'state': 'EXECUTED',
-                                                                        'to': 'Счет 75651667383060284188'}]
+def test_get_list_of_5_succ_ops(load_json):
+    assert get_list_of_5_succ_ops(load_json) == [{'date': '2019-04-04T23:20:05.206878',
+                                                  'description': "Перевод со счета на счет",
+                                                  'from': 'Счет 19708645243227258542',
+                                                  'id': 142264268,
+                                                  'operationAmount': {'amount': '79114.93',
+                                                                      'currency': {'code': 'USD', 'name': 'USD'}},
+                                                  'state': 'EXECUTED',
+                                                  'to': 'Счет 75651667383060284188'},
+                                                 {'date': '2019-07-03T18:35:29.512364',
+                                                  'description': 'Перевод организации',
+                                                  'from': 'MasterCard 7158300734726758',
+                                                  'id': 41428829,
+                                                  'operationAmount': {'amount': '8221.37',
+                                                                      'currency': {'code': 'USD', 'name': 'USD'}},
+                                                  'state': 'EXECUTED',
+                                                  'to': 'Счет 35383033474447895560'},
+                                                 {'date': '2019-07-12T20:41:47.882230',
+                                                  'description': 'Перевод организации',
+                                                  'from': 'Счет 48894435694657014368',
+                                                  'id': 522357576,
+                                                  'operationAmount': {'amount': '51463.70',
+                                                                      'currency': {'code': 'USD', 'name': 'USD'}},
+                                                  'state': 'EXECUTED',
+                                                  'to': 'Счет 38976430693692818358'},
+                                                 {'date': '2019-08-26T10:50:58.294041',
+                                                  'description': 'Перевод организации',
+                                                  'from': 'Maestro 1596837868705199',
+                                                  'id': 441945886,
+                                                  'operationAmount': {'amount': '31957.58',
+                                                                      'currency': {'code': 'RUB', 'name': 'руб.'}},
+                                                  'state': 'EXECUTED',
+                                                  'to': 'Счет 64686473678894779589'},
+                                                 {'date': '2019-12-08T22:46:21.935582',
+                                                  'description': 'Открытие вклада',
+                                                  'id': 863064926,
+                                                  'operationAmount': {'amount': '41096.24',
+                                                                      'currency': {'code': 'USD', 'name': 'USD'}},
+                                                  'state': 'EXECUTED',
+                                                  'to': 'Счет 90424923579946435907'}]
 
 
 def test_convert_number():
@@ -81,17 +68,19 @@ def test_convert_number():
 
 
 def test_print_operations(load_json):
-    last_five_list = list_of_dates(load_json)
-    list_ops_reverse = list_of_operations(load_json, last_five_list)
-    assert print_operations(list_ops_reverse[0]) == '08.12.2019 Открытие вклада\nСчет  **5907\n41096.24 USD\n'
-    assert print_operations(list_ops_reverse[1]) == ('26.08.2019 Перевод организации\n'
-                                                     'Maestro 1596 83** **** 5199 -> Счет  **9589\n'
-                                                     '31957.58 руб.\n')
-    assert print_operations(list_ops_reverse[2]) == '12.07.2019 Перевод организации\nСчет  **4368 -> Счет  ' \
-                                                    '**8358\n51463.70 USD\n'
-    assert print_operations(list_ops_reverse[3]) == ('03.07.2019 Перевод организации\n'
-                                                     'MasterCard 7158 30** **** 6758 -> Счет  **5560\n'
-                                                     '8221.37 USD\n')
+    assert print_operations(
+        get_list_of_5_succ_ops(load_json)[0]) == ('04.04.2019 Перевод со счета на счет\n'
+                                                  'Счет  **8542 -> Счет  **4188\n'
+                                                  '79114.93 USD\n')
+    assert print_operations(get_list_of_5_succ_ops(load_json)[1]) == ('03.07.2019 Перевод организации\n'
+                                                                      'MasterCard 7158 30** **** 6758 -> Счет  **5560\n'
+                                                                      '8221.37 USD\n')
+    assert print_operations(
+        get_list_of_5_succ_ops(load_json)[2]) == '12.07.2019 Перевод организации\nСчет  **4368 -> Счет  ' \
+                                                 '**8358\n51463.70 USD\n'
+    assert print_operations(get_list_of_5_succ_ops(load_json)[3]) == ('26.08.2019 Перевод организации\n'
+                                                                      'Maestro 1596 83** **** 5199 -> Счет  **9589\n'
+                                                                      '31957.58 руб.\n')
 
 
 def test_open_json_file(load_json):
