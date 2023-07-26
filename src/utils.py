@@ -1,40 +1,29 @@
+import json
+import os
 from datetime import datetime
 
 
-def list_of_dates(text):
-    """Функция возвращает список из пяти дат от последних
-    успешных операций
-    из json файла"""
-    list = []
-    for i in range(len(text)):
-        if text[i] == {}:
-            continue
-        if text[i]['state'] == "CANCELED":
-            continue
-        list.append(text[i]['date'])
-    sorted_list = sorted(list)
-    last_five_list = sorted_list[-5:]
-    return last_five_list
+def open_json_file(file_dir, file_name):
+    operation_path = os.path.join(os.path.dirname(file_dir), file_name)
+    with open(operation_path, 'r', encoding='utf-8') as file:
+        ops_catalog = json.load(file)
+    return ops_catalog
 
-def get_name(dictionary):
+
+def _get_date(dictionary):
     """Функция возвращает имя ключа для дальнейшей сортировки по нему"""
     return dictionary['date']
 
-def list_of_operations(text, list):
+
+def get_list_of_5_succ_ops(all_operations):
     """Функция возвращает список из словарей с информацией по последним
 пяти успешным операциям"""
-    list_ops = []
-    for i in range(len(text)):
-        for a in range(len(list)):
-            if text[i] == {}:
-                continue
-            if text[i]['state'] == "CANCELED":
-                continue
-            if text[i]['date'] == list[a]:
-                list_ops.append(text[i])
-    list_ops_sorted = sorted(list_ops, key=get_name)
-    list_ops_reverse = list_ops_sorted[::-1]
-    return list_ops_reverse
+    succ_ops = []
+    for op in all_operations:
+        if op.get('state') == "EXECUTED":
+            succ_ops.append(op)
+    sorted_ops = sorted(succ_ops, key=_get_date)
+    return sorted_ops[-5:]
 
 
 def convert_number(number):
@@ -44,11 +33,11 @@ def convert_number(number):
     else:
         return number[:-16] + number[-16:-12] + ' ' + number[-12:-10] + '** **** ' + number[-4:]
 
+
 def print_operations(elem_of_list_ops):
     """Функция выводит 5 последних успешных операций из файла json"""
     thedate = datetime.fromisoformat(elem_of_list_ops['date'])
     description = elem_of_list_ops['description']
-    from_whom = None
     if 'from' in elem_of_list_ops:
         from_whom = convert_number(elem_of_list_ops['from']) + ' -> '
     else:
@@ -60,3 +49,4 @@ def print_operations(elem_of_list_ops):
 {from_whom}{to_whom}
 {amount} {currency}
 """
+
